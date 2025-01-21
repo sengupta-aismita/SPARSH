@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="theme-color" content="#1A1423">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Voice Chat with MITRA-DOJ</title>
+    
+    <style>
+      df-messenger {
+        z-index: 999;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        --df-messenger-bot-message: #E94560;
+        --df-messenger-button-titlebar-color: #1A1423;
+        --df-messenger-chat-background-color: #f5f5f5;
+        --df-messenger-font-color: white;
+        --df-messenger-user-message: #3D314A;
+      }
+      
+      .mic-button {
+        position: fixed;
+        bottom: 106px;
+        right: 30px;
+        z-index: 1000;
+        background: rgba(26, 20, 35, 0.1);
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        opacity: 0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      }
+
+      .mic-button svg {
+        width: 24px;
+        height: 24px;
+        fill: transparent;
+        transition: fill 0.3s ease;
+      }
+
+      .mic-button.chatbot-open {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      .mic-button.chatbot-open svg {
+        fill: #666666;
+      }
+
+      .mic-button:hover {
+        background: rgba(26, 115, 232, 0.1);
+        transform: scale(1.05);
+      }
+
+      .mic-button.recording {
+        animation: listening 1.5s infinite ease-in-out;
+      }
+
+      .mic-button.recording svg {
+        fill: white;
+      }
+
+      *{
+    font-family: "Kanit", serif;
+    margin: 0;
+    padding: 0;
+      }
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #1A1423;
+    height: 12vh;
+    width: 100%;
+    top:0;
+    z-index: 1000;
+    position: sticky;
+    box-sizing: border-box;
+}
+
+.nav1{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+
+
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    font-size: 1.2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #684756;
+}
+
+.icon{
+    margin-right: 5px;
+}
+
+.navbar select{
+    width: 100px;
+    padding: 5px;
+    background-color: #684756;
+    color: #ebe7e5;
+    font-size: 15px;
+    border: none;
+    border-radius: 0.5rem;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #684756;
+    list-style:none;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu li a {
+    color: #ebe7e5;
+    padding: 5px 10px;
+    display: block;
+    text-decoration: none;
+}
+
+.dropdown-menu li a:hover {
+    background-color: #3D314A;
+    color: #1A1423;
+}
+
+.center1 button {
+    height: 60px;
+    width: 200px;
+    background-color: #1A1423;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 1rem;
+    transition: background-color 0.3s;
+    font-size: 18px;
+}
+
+.btns{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+}
+
+button:hover {
+    background-color: #3D314A;
+    box-shadow: 0 0 5px 4px rgba(167, 27, 108, 0.8), 
+                0 0 5px 5px rgba(238, 42, 179, 0.6);
+    transform: scale(1.05); 
+}
+
+main {
+    height: 80vh;
+    width: 100%;
+    background-image: url("bg.png");
+    background-size: cover;
+}
+
+#home{
+    display: flex;
+    justify-content: space-between; 
+    margin: 0px 30px; 
+}
+
+.center1{
+    height: 100%;
+    width: 100%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.center1 h1{
+    margin: 10px;
+    border-radius: 1.5rem;
+    text-align: center;
+    width:45%;
+    font-size: 40px;
+    color: white;
+    background-color: #1A1423;
+}
+
+.center1 h2{
+    font-size: 55px;
+
+    color: white;
+    background-color: #1A1423;
+    padding: 5px 15px;
+    border-radius: 1rem;
+}
+
+
+.center1 p{
+    font-size: 22px;
+    font-weight: 500;
+    height: 90%;
+    width: 50%;
+    background-color: #E94560;
+    text-align:center;
+    border-radius: 2rem;
+    margin: 20px 0px;
+    padding: 10px;
+    color: #1A1423;
+    box-shadow: 0 0 20px 5px rgba(212, 64, 136, 0.8), 
+    0 0 5px 5px rgba(138, 43, 226, 0.6);
+}
+
+
+footer {
+    background-color: #3D314A;
+    color: #967058;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: auto;
+    height: 5.1vh;
+    width: 100%;
+}
+
+      @keyframes listening {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+
+      /* Media Queries for Responsiveness */
+      @media screen and (max-width: 768px) {
+          .navbar {
+              flex-direction: column;
+              height: auto;
+              padding: 10px;
+          }
+
+          .nav-links {
+              flex-direction: column;
+              gap: 15px;
+              width: 100%;
+              text-align: center;
+          }
+
+          .nav2 {
+              margin-top: 10px;
+          }
+
+          .center1 h1 {
+              width: 90%;
+              font-size: 28px;
+          }
+
+          .center1 h2 {
+              font-size: 35px;
+          }
+
+          .center1 p {
+              width: 90%;
+              font-size: 18px;
+          }
+
+          .btns {
+              flex-direction: column;
+              gap: 10px;
+          }
+
+          .mic-button {
+              bottom: 80px;
+              right: 20px;
+              width: 40px;
+              height: 40px;
+          }
+      }
+
+      /* Small screens */
+      @media screen and (max-width: 480px) {
+          .center1 h1 {
+              font-size: 24px;
+          }
+
+          .center1 h2 {
+              font-size: 30px;
+          }
+
+          .center1 p {
+              font-size: 16px;
+          }
+      }
+
+      /* Cross-browser compatibility */
+      .mic-button {
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          appearance: none;
+          -webkit-tap-highlight-color: transparent;
+      }
+
+      /* Fallback for browsers without CSS Grid */
+      @supports not (display: grid) {
+          .nav-links {
+              display: flex;
+              flex-wrap: wrap;
+          }
+      }
+
+      /* Better touch targets for mobile */
+      @media (pointer: coarse) {
+          .nav-links a,
+          .dropdown-menu li a,
+          button {
+              min-height: 44px;
+              padding: 12px 15px;
+          }
+      }
+
+      /* Reduce motion for accessibility */
+      @media (prefers-reduced-motion: reduce) {
+          .mic-button,
+          button {
+              transition: none;
+          }
+
+          .mic-button.recording {
+              animation: none;
+          }
+      }
+
+      /* Fix for iOS Safari */
+      .dropdown-menu {
+          -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+      }
+
+      /* Fix for Firefox */
+      @-moz-document url-prefix() {
+          .mic-button {
+              background: rgba(26, 20, 35, 0.2);
+          }
+      }
+
+      /* Better scrolling on iOS */
+      html, body {
+          -webkit-overflow-scrolling: touch;
+          scroll-behavior: smooth;
+      }
+
+      /* Fix for sticky hover on mobile */
+      @media (hover: hover) {
+          .nav-links a:hover,
+          button:hover {
+              /* Your hover styles */
+          }
+      }
+    </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="nav1">
+        
+       </div>
+      
+      <ul class="nav-links">
+        <li><a href="index.html"><i class="fa-solid fa-house icon"></i>Home</a></li>
+        <li class="dropdown">
+          <a href="#"><i class="fa-solid fa-laptop icon"></i>Workspace</a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Why Us?</a></li>
+            <li><a href="#">AI Assistance</a></li>
+            <li><a href="#">Meet our Bot</a></li>
+          </ul>
+        </li>
+        <li><a href="#"><i class="fa-solid fa-dollar-sign icon"></i>Plans</a></li>
+        <li class="spacer"></li>
+      </div>
+      <div class="nav2 nav-links">
+        <select>
+          <i class="fa-solid fa-language"></i>
+          <option>English</option>
+          <option>Hindi</option>
+          <option>Bengali</option>
+          <option>Spanish</option>
+          <option>French</option>
+        </select>
+        <li><a href="#"><i class="fa-solid fa-file icon"></i>Docs</a></li>
+       </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home">
+      <div class="center1">
+        <h1>Your Smartest Virtual Assistant</h1>
+        <h2>Welcome to SPARSH!</h2>
+        <p>
+          Experience the future of interaction with our AI-powered chatbot—designed to provide instant answers, personalized support, and meaningful conversations, all in one place, anytime you need it!
+        </p>
+        <div class="btns">
+          <button onclick="location.href='pricing.html'">View Plans</button>
+          <button onclick="location.href='trial.html'">
+            Book a Free Trial
+          </button>
+        </div>
+      
+      </div>
+      
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2024 Sparsh. All rights reserved.</p>
+  </footer>
+
+    <!-- Dialogflow Messenger -->
+    
+
+    <!-- Voice Input Button -->
+    <button class="mic-button" onclick="startSpeechRecognition()" title="Start voice input">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/>
+      </svg>
+    </button>
+
+    <div class="chat-notification" style="display: none;">
+        <p>Press 'M' to start voice input</p>
+    </div>
+
+    <script>
+    // Speech Recognition Function
+    function startSpeechRecognition() {
+      if ('webkitSpeechRecognition' in window) {
+        // Stop any existing recognition
+        if (window.recognition) {
+          window.recognition.stop();
+          return;
+        }
+
+        const recognition = new webkitSpeechRecognition();
+        window.recognition = recognition; // Store reference globally
+        const micButton = document.querySelector('.mic-button');
+        
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = () => {
+          micButton.classList.add('recording');
+        };
+
+        recognition.onresult = (event) => {
+          const text = event.results[0][0].transcript;
+          
+          const iframe = document.querySelector('df-messenger').shadowRoot
+            .querySelector('df-messenger-chat')
+            .shadowRoot
+            .querySelector('df-messenger-user-input');
+          
+          const input = iframe.shadowRoot.querySelector('input');
+          input.value = text;
+          input.dispatchEvent(new KeyboardEvent('keypress', { key: 'Enter' }));
+        };
+
+        recognition.onerror = (event) => {
+          console.error('Speech recognition error:', event.error);
+          micButton.classList.remove('recording');
+          window.recognition = null;
+        };
+
+        recognition.onend = () => {
+          micButton.classList.remove('recording');
+          window.recognition = null;
+        };
+
+        recognition.start();
+      } else {
+        alert('Speech recognition is not supported in your browser. Please try using Chrome.');
+      }
+    }
+
+    // Chat window state management
+    function handleChatState(isOpen) {
+      const micButton = document.querySelector('.mic-button');
+      if (micButton) {
+        if (isOpen) {
+          micButton.classList.add('chatbot-open');
+          console.log('Chat opened - mic visible');
+        } else {
+          micButton.classList.remove('chatbot-open');
+          console.log('Chat closed - mic hidden');
+        }
+      }
+    }
+
+    // Dialogflow messenger event listeners
+    document.addEventListener('df-messenger-loaded', () => {
+      const dfMessenger = document.querySelector('df-messenger');
+      
+      dfMessenger.addEventListener('df-messenger-opened', () => {
+        handleChatState(true);
+      });
+
+      dfMessenger.addEventListener('df-messenger-closed', () => {
+        handleChatState(false);
+      });
+    });
+
+    // Watch for Dialogflow messenger chat window
+    function watchDialogflowChat() {
+      const dfMessenger = document.querySelector('df-messenger');
+      if (!dfMessenger || !dfMessenger.shadowRoot) return;
+
+      const observer = new MutationObserver((mutations) => {
+        const chat = dfMessenger.shadowRoot.querySelector('df-messenger-chat');
+        const micButton = document.querySelector('.mic-button');
+        
+        if (chat && micButton) {
+          const isExpanded = chat.hasAttribute('expanded');
+          if (isExpanded) {
+            micButton.classList.add('chatbot-open');
+          } else {
+            micButton.classList.remove('chatbot-open');
+            // Stop any ongoing recognition when chat is closed
+            if (window.recognition) {
+              window.recognition.stop();
+            }
+          }
+        }
+      });
+
+      observer.observe(dfMessenger.shadowRoot, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['expanded']
+      });
+    }
+
+    // Initialize watcher
+    function initializeWatcher() {
+      const dfMessenger = document.querySelector('df-messenger');
+      if (dfMessenger) {
+        if (dfMessenger.shadowRoot) {
+          watchDialogflowChat();
+        } else {
+          dfMessenger.addEventListener('df-messenger-loaded', () => {
+            watchDialogflowChat();
+          });
+        }
+      }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', initializeWatcher);
+
+    // Add touch support for dropdown
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdowns = document.querySelectorAll('.dropdown');
+        
+        dropdowns.forEach(dropdown => {
+            dropdown.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                const menu = this.querySelector('.dropdown-menu');
+                const isOpen = menu.style.display === 'block';
+                
+                // Close all other dropdowns
+                document.querySelectorAll('.dropdown-menu').forEach(m => {
+                    m.style.display = 'none';
+                });
+
+                menu.style.display = isOpen ? 'none' : 'block';
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('touchstart', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                });
+            }
+        });
+    });
+
+    // Handle orientation change
+    window.addEventListener('orientationchange', function() {
+        // Force layout recalculation
+        document.body.style.display = 'none';
+        setTimeout(() => {
+            document.body.style.display = '';
+        }, 10);
+    });
+
+    // Polyfill for browsers without WebKit Speech Recognition
+    if (!('webkitSpeechRecognition' in window)) {
+        const micButton = document.querySelector('.mic-button');
+        micButton.style.display = 'none';
+        
+        // Show alternative input method message
+        const altInput = document.createElement('div');
+        altInput.className = 'alt-input-message';
+        altInput.textContent = 'Voice input is not supported in your browser. Please type your message.';
+        document.body.appendChild(altInput);
+    }
+    </script>
+</body>
+</html> 
