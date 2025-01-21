@@ -449,7 +449,13 @@ footer {
   </footer>
 
     <!-- Dialogflow Messenger -->
-    
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <df-messenger
+        intent="WELCOME"
+        chat-title="SPARSH"
+        agent-id="e65e299e-c46e-4166-9948-478c4f69f1ba"
+        language-code="en">
+    </df-messenger>   
 
     <!-- Voice Input Button -->
     <button class="mic-button" onclick="startSpeechRecognition()" title="Start voice input">
